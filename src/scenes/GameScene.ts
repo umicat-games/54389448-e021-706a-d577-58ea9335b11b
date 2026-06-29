@@ -83,6 +83,7 @@ export class GameScene extends Phaser.Scene {
   private level = 1;
   private state: 'playing' | 'levelComplete' | 'gameOver' = 'playing';
   private stateTimer = 0;
+  private gameOverCooldown = 0; // ms since entering gameOver — prevents instant restart
 
   // ── HUD ──────────────────────────────────────────────────────────────────
   private scoreText!: Phaser.GameObjects.Text;
@@ -899,6 +900,7 @@ export class GameScene extends Phaser.Scene {
   private triggerGameOver(): void {
     this.state = 'gameOver';
     this.stateTimer = 4000;
+    this.gameOverCooldown = 0; // reset — will count up in update()
     this.time.delayedCall(500, () => {
       this.showOverlay('GAME OVER\n\nPress SPACE\nto restart');
     });
@@ -917,7 +919,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private hideOverlay(): void {
+    this.tweens.killTweensOf(this.overlayText); // stop any in-flight entrance tween
     this.overlayText.setAlpha(0);
+    this.overlayText.setScale(1); // reset scale for next show
   }
 
   // ─── Bullet out-of-bounds ─────────────────────────────────────────────────
@@ -937,7 +941,10 @@ export class GameScene extends Phaser.Scene {
   // ─── Update ───────────────────────────────────────────────────────────────
   update(_time: number, delta: number): void {
     if (this.state === 'gameOver') {
-      if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+      this.gameOverCooldown += delta;
+      // Only accept restart input after 1500ms — prevents immediate restart
+      // when Space was held for shooting at the moment of death.
+      if (this.gameOverCooldown > 1500 && Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
         this.restartGame();
       }
       return;
