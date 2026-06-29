@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { preloadManifest, getManifest } from '@umicat/phaser-sdk';
 import { GAME_WIDTH, GAME_HEIGHT } from '../config';
 
 /**
@@ -21,12 +20,10 @@ export class BootScene extends Phaser.Scene {
 
   preload(): void {
     drawLoadingBar(this);
-    preloadManifest(this);
   }
 
   create(): void {
-    const manifest = getManifest(this);
-    this.scene.start('GameScene', { sceneId: manifest.initialScene });
+    this.scene.start('GameScene', {});
   }
 }
 
