@@ -583,11 +583,14 @@ export class GameScene extends Phaser.Scene {
     sprite.setAngle(180); // facing down initially
     const eb = sprite.body as Phaser.Physics.Arcade.Body;
     eb.setSize(26, 26);
-    eb.setBounce(0, 0); // no bouncing — tanks stop dead on collision
-    // Mass determines push hierarchy:
-    //   armored (50) >> normal (1) — armored can bulldoze normal, not vice versa
-    //   same mass → neither pushes the other (equal separation, bounce=0)
-    eb.setMass(kind === 'armored' ? 50 : 1);
+    eb.setBounce(0, 0);
+    // Push hierarchy via immovable flag (NOT mass):
+    //   immovable=true → Phaser never alters this body's velocity or position
+    //     during dynamic-vs-dynamic collision, so the armored tank keeps moving
+    //     and pushes normal tanks / player out of the way.
+    //   mass=50 caused teleporting because Phaser zeroed velocity → AI reset it
+    //     immediately → rapid oscillation. immovable avoids that entirely.
+    eb.setImmovable(kind === 'armored');
 
     // Spawn flash
     const flash = this.add.image(wx, wy, 'respawn').setDepth(5).setAlpha(0.8);
@@ -744,6 +747,23 @@ export class GameScene extends Phaser.Scene {
       if (e.sprite.x > maxX) { e.sprite.x = maxX; this.reverseDir(e, 'right'); }
       if (e.sprite.y < minY) { e.sprite.y = minY; this.reverseDir(e, 'up'); }
       if (e.sprite.y > maxY) { e.sprite.y = maxY; this.reverseDir(e, 'down'); }
+
+      // Armored-vs-armored: both are immovable so Phaser won't separate them.
+      // Manually detect close proximity and force a direction change so they
+      // don't phase through each other.
+      if (e.kind === 'armored') {
+        for (const other of this.enemies) {
+          if (other === e || !other.sprite.active || other.kind !== 'armored') continue;
+          const dist = Phaser.Math.Distance.Between(
+            e.sprite.x, e.sprite.y, other.sprite.x, other.sprite.y
+          );
+          if (dist < 30) {
+            body.setVelocity(0, 0);
+            e.moveTick = 0; // force new direction on next tick
+            break;
+          }
+        }
+      }
 
       // Shoot
       e.shootTick -= delta;
