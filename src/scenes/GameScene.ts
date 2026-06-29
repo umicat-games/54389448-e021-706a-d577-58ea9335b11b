@@ -425,7 +425,10 @@ export class GameScene extends Phaser.Scene {
       this.player = this.physics.add.sprite(px, py, 'tank-player');
       this.player.setDepth(2);
       this.player.setOrigin(0.5, 0.5);
-      (this.player.body as Phaser.Physics.Arcade.Body).setSize(26, 26);
+      const pb = this.player.body as Phaser.Physics.Arcade.Body;
+      pb.setSize(26, 26);
+      pb.setBounce(0, 0); // no bouncing on collision
+      pb.setMass(1);      // same mass as normal enemy — blocks but doesn't push
     }
 
     this.playerDir = 'up';
@@ -578,7 +581,13 @@ export class GameScene extends Phaser.Scene {
     sprite.setDepth(2);
     sprite.setOrigin(0.5, 0.5);
     sprite.setAngle(180); // facing down initially
-    (sprite.body as Phaser.Physics.Arcade.Body).setSize(26, 26);
+    const eb = sprite.body as Phaser.Physics.Arcade.Body;
+    eb.setSize(26, 26);
+    eb.setBounce(0, 0); // no bouncing — tanks stop dead on collision
+    // Mass determines push hierarchy:
+    //   armored (50) >> normal (1) — armored can bulldoze normal, not vice versa
+    //   same mass → neither pushes the other (equal separation, bounce=0)
+    eb.setMass(kind === 'armored' ? 50 : 1);
 
     // Spawn flash
     const flash = this.add.image(wx, wy, 'respawn').setDepth(5).setAlpha(0.8);
