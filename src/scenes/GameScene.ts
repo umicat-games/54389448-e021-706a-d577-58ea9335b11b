@@ -61,6 +61,7 @@ export class GameScene extends Phaser.Scene {
   private respawnTimer = 0;
 
   // ── Enemies ──────────────────────────────────────────────────────────────
+  private enemyGroup!: Phaser.Physics.Arcade.Group;
   private enemies: Enemy[] = [];
   private enemySpawnQueue = 0;
   private enemySpawnTimer = 0;
@@ -326,6 +327,7 @@ export class GameScene extends Phaser.Scene {
     // Physics groups
     this.bricks = this.physics.add.staticGroup();
     this.steels = this.physics.add.staticGroup();
+    this.enemyGroup = this.physics.add.group();
     this.playerBullets = this.physics.add.group({ defaultKey: 'bullet-player' });
     this.enemyBullets = this.physics.add.group({ defaultKey: 'bullet-enemy' });
 
@@ -467,6 +469,16 @@ export class GameScene extends Phaser.Scene {
     // Player vs bricks/steel
     this.physics.add.collider(this.player, this.bricks);
     this.physics.add.collider(this.player, this.steels);
+
+    // Player vs enemies (solid — can't drive through each other)
+    this.physics.add.collider(this.player, this.enemyGroup);
+
+    // Enemy vs enemy (solid)
+    this.physics.add.collider(this.enemyGroup, this.enemyGroup);
+
+    // Enemies vs walls (solid)
+    this.physics.add.collider(this.enemyGroup, this.bricks);
+    this.physics.add.collider(this.enemyGroup, this.steels);
   }
 
   // ─── HUD ──────────────────────────────────────────────────────────────────
@@ -535,7 +547,7 @@ export class GameScene extends Phaser.Scene {
     this.enemySpawnTimer = 2000;
 
     // Clear existing enemies and bullets
-    this.enemies.forEach(e => e.sprite.destroy());
+    this.enemyGroup.clear(true, true);
     this.enemies = [];
     this.playerBullets.clear(true, true);
     this.enemyBullets.clear(true, true);
@@ -558,15 +570,13 @@ export class GameScene extends Phaser.Scene {
     const kind: EnemyKind = (this.level >= 2 && Math.random() < 0.3) ? 'armored' : 'normal';
     const texKey = kind === 'armored' ? 'tank-enemy-armored' : 'tank-enemy-normal';
 
-    const sprite = this.physics.add.sprite(wx, wy, texKey);
+    // Use enemyGroup.create() so the body is fresh (no reset) and the
+    // group-level colliders registered in setupCollisions() apply automatically.
+    const sprite = this.enemyGroup.create(wx, wy, texKey) as Phaser.Physics.Arcade.Sprite;
     sprite.setDepth(2);
     sprite.setOrigin(0.5, 0.5);
     sprite.setAngle(180); // facing down initially
     (sprite.body as Phaser.Physics.Arcade.Body).setSize(26, 26);
-
-    // Collide with walls and player
-    this.physics.add.collider(sprite, this.bricks);
-    this.physics.add.collider(sprite, this.steels);
 
     // Spawn flash
     const flash = this.add.image(wx, wy, 'respawn').setDepth(5).setAlpha(0.8);
@@ -1039,13 +1049,14 @@ export class GameScene extends Phaser.Scene {
     this.steels.clear(true, true);
     this.playerBullets.clear(true, true);
     this.enemyBullets.clear(true, true);
-    this.enemies.forEach(e => e.sprite.destroy());
+    this.enemyGroup.clear(true, true);
     this.enemies = [];
 
     this.buildMap();
     this.base.setTexture('base');
     this.placeBrickAround(Math.floor(COLS / 2) - 1, ROWS - 1);
-    this.setupCollisions();
+    // No need to re-call setupCollisions — the existing colliders still
+    // reference the same group objects (bricks/steels/enemyGroup/player).
     this.spawnPlayer();
     this.startLevel();
   }

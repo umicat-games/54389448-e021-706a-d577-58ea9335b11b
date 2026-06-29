@@ -42,3 +42,4 @@
 ## Last changed
 - Initial build: full tank battle game from scratch
 - Fixed: enemy tank textures redrawn facing UP (barrel at top) to match rotation logic; previously barrel was at bottom causing bullets to fire from the wrong end
+- Fixed: added enemyGroup (Phaser.Physics.Arcade.Group) — player↔enemy and enemy↔enemy solid colliders registered via the group; enemies now block each other and the player
