@@ -584,13 +584,16 @@ export class GameScene extends Phaser.Scene {
     const eb = sprite.body as Phaser.Physics.Arcade.Body;
     eb.setSize(26, 26);
     eb.setBounce(0, 0);
-    // Push hierarchy via immovable flag (NOT mass):
-    //   immovable=true → Phaser never alters this body's velocity or position
-    //     during dynamic-vs-dynamic collision, so the armored tank keeps moving
-    //     and pushes normal tanks / player out of the way.
-    //   mass=50 caused teleporting because Phaser zeroed velocity → AI reset it
-    //     immediately → rapid oscillation. immovable avoids that entirely.
-    eb.setImmovable(kind === 'armored');
+    // Push hierarchy via body.pushable (NOT immovable, NOT mass):
+    //   pushable=false → Phaser won't move this body when resolving dynamic-vs-dynamic
+    //     collisions, so normal tanks / player get pushed away by armored tanks.
+    //   pushable only affects dynamic-vs-dynamic; the dynamic-vs-static path (walls)
+    //     still pushes ANY dynamic body back normally → armored tanks collide with walls.
+    //   immovable=true blocked static-wall separation too → tanks phased through walls.
+    //   mass=50 caused teleporting (Phaser zeroed velocity → AI reset → oscillation).
+    if (kind === 'armored') {
+      eb.pushable = false;
+    }
 
     // Spawn flash
     const flash = this.add.image(wx, wy, 'respawn').setDepth(5).setAlpha(0.8);

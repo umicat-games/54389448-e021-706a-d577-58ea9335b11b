@@ -39,7 +39,15 @@
 - WASD / Arrow keys: move
 - Space: shoot
 
+## Push hierarchy
+- Armored tanks: `body.pushable = false` — won't be displaced by dynamic-vs-dynamic collisions
+  - Normal/player (pushable=true) get pushed away by armored tanks ✅
+  - Armored tanks still collide with static walls normally (pushable only affects dynamic-vs-dynamic) ✅
+  - Armored-vs-armored: neither pushable → manual proximity check in updateEnemies forces direction change
+- Normal tanks: pushable=true (default) → block each other 50/50, can't push armored
+
 ## Last changed
 - Initial build: full tank battle game from scratch
-- Fixed: enemy tank textures redrawn facing UP (barrel at top) to match rotation logic; previously barrel was at bottom causing bullets to fire from the wrong end
-- Fixed: added enemyGroup (Phaser.Physics.Arcade.Group) — player↔enemy and enemy↔enemy solid colliders registered via the group; enemies now block each other and the player
+- Fixed: enemy tank textures redrawn facing UP (barrel at top) to match rotation logic
+- Fixed: added enemyGroup for player↔enemy and enemy↔enemy solid colliders
+- Fixed: push hierarchy via body.pushable=false on armored tanks (replaces broken immovable=true which blocked static-wall collision; and mass=50 which caused teleporting)
