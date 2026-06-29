@@ -541,6 +541,7 @@ export class GameScene extends Phaser.Scene {
 
   // ─── Level management ─────────────────────────────────────────────────────
   private startLevel(): void {
+    this.physics.world.resume(); // unfreeze after levelComplete / gameOver pause
     this.state = 'playing';
     this.totalEnemiesThisLevel = Math.min(6 + (this.level - 1) * 2, 20);
     this.enemySpawnQueue = this.totalEnemiesThisLevel;
@@ -893,6 +894,7 @@ export class GameScene extends Phaser.Scene {
       this.updateHUD();
       this.state = 'levelComplete';
       this.stateTimer = 3000;
+      this.physics.world.pause(); // freeze all movement while overlay shows
       this.showOverlay(`STAGE ${this.level}\nCOMPLETE!\n+500 BONUS`);
     }
   }
@@ -901,6 +903,7 @@ export class GameScene extends Phaser.Scene {
     this.state = 'gameOver';
     this.stateTimer = 4000;
     this.gameOverCooldown = 0; // reset — will count up in update()
+    this.physics.world.pause(); // freeze all movement while overlay shows
     this.time.delayedCall(500, () => {
       this.showOverlay('GAME OVER\n\nPress SPACE\nto restart');
     });
