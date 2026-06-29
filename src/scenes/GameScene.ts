@@ -128,51 +128,63 @@ export class GameScene extends Phaser.Scene {
       g.destroy();
     }
 
-    // ── Enemy tank normal (facing down) ──────────────────────────────────
+    // ── Enemy tank normal (facing UP, same orientation as player) ────────
     {
       const g = this.make.graphics({ add: false });
+      // tracks
       g.fillStyle(0x1a3a1a);
-      g.fillRect(0, 0, 5, 24);
-      g.fillRect(23, 0, 5, 24);
+      g.fillRect(0, 4, 5, 24);
+      g.fillRect(23, 4, 5, 24);
+      // body
       g.fillStyle(0x2a5e2a);
-      g.fillRect(5, 2, 18, 20);
+      g.fillRect(5, 6, 18, 20);
+      // highlight
       g.fillStyle(0x3a7a3a);
-      g.fillRect(6, 3, 8, 8);
+      g.fillRect(6, 7, 8, 8);
+      // turret
       g.fillStyle(0x1e4a1e);
-      g.fillRect(10, 10, 8, 8);
+      g.fillRect(10, 8, 8, 8);
+      // barrel — pointing UP (y=0 to y=14, same as player)
       g.fillStyle(0x122812);
-      g.fillRect(13, 14, 4, 14);
+      g.fillRect(13, 0, 4, 14);
+      // track details
       g.fillStyle(0x0d1a0d);
       for (let i = 0; i < 4; i++) {
-        g.fillRect(0, i * 6, 5, 2);
-        g.fillRect(23, i * 6, 5, 2);
+        g.fillRect(0, 6 + i * 6, 5, 2);
+        g.fillRect(23, 6 + i * 6, 5, 2);
       }
       g.generateTexture('tank-enemy-normal', 28, 28);
       g.destroy();
     }
 
-    // ── Enemy tank armored (facing down) ─────────────────────────────────
+    // ── Enemy tank armored (facing UP, same orientation as player) ────────
     {
       const g = this.make.graphics({ add: false });
+      // tracks
       g.fillStyle(0x3a1a1a);
-      g.fillRect(0, 0, 5, 24);
-      g.fillRect(23, 0, 5, 24);
+      g.fillRect(0, 4, 5, 24);
+      g.fillRect(23, 4, 5, 24);
+      // body
       g.fillStyle(0x8a2a2a);
-      g.fillRect(5, 2, 18, 20);
+      g.fillRect(5, 6, 18, 20);
+      // highlight
       g.fillStyle(0xaa3a3a);
-      g.fillRect(6, 3, 8, 8);
+      g.fillRect(6, 7, 8, 8);
+      // turret
       g.fillStyle(0x6e1e1e);
-      g.fillRect(10, 10, 8, 8);
+      g.fillRect(10, 8, 8, 8);
+      // barrel — pointing UP (y=0 to y=14, same as player)
       g.fillStyle(0x4a1212);
-      g.fillRect(13, 14, 4, 14);
+      g.fillRect(13, 0, 4, 14);
+      // track details
       g.fillStyle(0x2a0808);
       for (let i = 0; i < 4; i++) {
-        g.fillRect(0, i * 6, 5, 2);
-        g.fillRect(23, i * 6, 5, 2);
+        g.fillRect(0, 6 + i * 6, 5, 2);
+        g.fillRect(23, 6 + i * 6, 5, 2);
       }
       // armor stripe
       g.fillStyle(0xcc4444);
-      g.fillRect(5, 11, 18, 2);
+      g.fillRect(5, 17, 18, 2);
       g.generateTexture('tank-enemy-armored', 28, 28);
       g.destroy();
     }

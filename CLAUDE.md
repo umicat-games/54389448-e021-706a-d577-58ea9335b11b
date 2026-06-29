@@ -41,3 +41,4 @@
 
 ## Last changed
 - Initial build: full tank battle game from scratch
+- Fixed: enemy tank textures redrawn facing UP (barrel at top) to match rotation logic; previously barrel was at bottom causing bullets to fire from the wrong end
