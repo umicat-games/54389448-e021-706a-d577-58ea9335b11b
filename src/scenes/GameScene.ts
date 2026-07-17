@@ -101,32 +101,100 @@ export class GameScene extends Phaser.Scene {
 
   // ─── Texture creation ─────────────────────────────────────────────────────
   private makeTextures(): void {
-    // ── Player tank (facing up) ──────────────────────────────────────────
+    // ── Player tank (facing up) — blue/gold special edition ─────────────
     {
       const g = this.make.graphics({ add: false });
-      // tracks
-      g.fillStyle(0x2d3a1a);
-      g.fillRect(0, 4, 5, 24);
-      g.fillRect(23, 4, 5, 24);
-      // body
-      g.fillStyle(0x4a6e28);
-      g.fillRect(5, 6, 18, 20);
-      // highlight
-      g.fillStyle(0x5d8a32);
-      g.fillRect(6, 7, 8, 8);
-      // turret
-      g.fillStyle(0x3d5c1e);
-      g.fillRect(10, 8, 8, 8);
-      // barrel
-      g.fillStyle(0x2a3d14);
-      g.fillRect(13, 0, 4, 14);
-      // track details
-      g.fillStyle(0x1a2210);
-      for (let i = 0; i < 4; i++) {
-        g.fillRect(0, 6 + i * 6, 5, 2);
-        g.fillRect(23, 6 + i * 6, 5, 2);
+
+      // --- tracks (near-black with gold accents) ---
+      g.fillStyle(0x111122);
+      g.fillRect(0, 4, 7, 26);   // left track
+      g.fillRect(25, 4, 7, 26);  // right track
+
+      // track tread marks (slightly lighter blue-grey)
+      g.fillStyle(0x2a2a44);
+      for (let i = 0; i < 5; i++) {
+        g.fillRect(0,  6 + i * 5, 7, 3);
+        g.fillRect(25, 6 + i * 5, 7, 3);
       }
-      g.generateTexture('tank-player', 28, 28);
+
+      // gold drive wheels (top + bottom)
+      g.fillStyle(0xffcc00);
+      g.fillRect(1, 5,  5, 4);   // top-left wheel
+      g.fillRect(1, 23, 5, 4);   // bottom-left wheel
+      g.fillRect(26, 5,  5, 4);  // top-right wheel
+      g.fillRect(26, 23, 5, 4);  // bottom-right wheel
+
+      // gold wheel centre pins
+      g.fillStyle(0xffeea0);
+      g.fillRect(3, 6,  1, 2);
+      g.fillRect(3, 24, 1, 2);
+      g.fillRect(28, 6,  1, 2);
+      g.fillRect(28, 24, 1, 2);
+
+      // --- body base (deep royal blue) ---
+      g.fillStyle(0x1a4a8a);
+      g.fillRect(7, 6, 18, 22);
+
+      // --- front armour plate (darker, forward slope) ---
+      g.fillStyle(0x12346a);
+      g.fillRect(7, 6, 18, 5);
+
+      // front bevel highlights
+      g.fillStyle(0x3370cc);
+      g.fillRect(9, 7, 5, 2);
+      g.fillRect(18, 7, 5, 2);
+
+      // body side creases
+      g.fillStyle(0x0d2240);
+      g.fillRect(7, 15, 1, 9);
+      g.fillRect(24, 15, 1, 9);
+
+      // body top highlight
+      g.fillStyle(0x2a6ab8);
+      g.fillRect(8, 7, 8, 7);
+
+      // engine / rear section (slightly darker)
+      g.fillStyle(0x0f2a50);
+      g.fillRect(7, 25, 18, 3);
+
+      // --- gold stripe across mid-body ---
+      g.fillStyle(0xffcc00);
+      g.fillRect(8, 19, 16, 2);
+
+      // --- turret (dark navy, boxy with bevel) ---
+      g.fillStyle(0x0e2854);
+      g.fillRect(11, 9, 10, 11);
+
+      // turret highlight corner
+      g.fillStyle(0x1e4a8a);
+      g.fillRect(12, 10, 4, 4);
+
+      // turret side shadow
+      g.fillStyle(0x081630);
+      g.fillRect(11, 19, 10, 1);
+
+      // --- star emblem on turret ---
+      g.fillStyle(0xffcc00);
+      g.fillRect(15, 11, 2, 7);   // vertical
+      g.fillRect(12, 14, 8, 2);   // horizontal
+      // star corners (diagonal pixels)
+      g.fillRect(13, 12, 1, 1);
+      g.fillRect(18, 12, 1, 1);
+      g.fillRect(13, 17, 1, 1);
+      g.fillRect(18, 17, 1, 1);
+
+      // --- barrel (wide, prominent) ---
+      g.fillStyle(0x081630);      // barrel shadow side
+      g.fillRect(14, 0, 4, 12);
+      g.fillStyle(0x1a3d6e);      // barrel highlight side
+      g.fillRect(14, 0, 2, 12);
+      // muzzle brake (slightly wider tip)
+      g.fillStyle(0x0f2a50);
+      g.fillRect(13, 0, 6, 3);
+      g.fillStyle(0x3370cc);
+      g.fillRect(13, 0, 3, 1);    // muzzle glint
+
+      g.generateTexture('tank-player', 32, 32);
       g.destroy();
     }
 

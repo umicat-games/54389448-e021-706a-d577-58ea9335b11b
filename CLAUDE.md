@@ -51,3 +51,4 @@
 - Fixed: enemy tank textures redrawn facing UP (barrel at top) to match rotation logic
 - Fixed: added enemyGroup for player↔enemy and enemy↔enemy solid colliders
 - Fixed: push hierarchy via body.pushable=false on armored tanks (replaces broken immovable=true which blocked static-wall collision; and mass=50 which caused teleporting)
+- Redesigned player tank: now 32×32, royal blue + gold scheme, gold drive wheels, gold star emblem on turret, beveled front armour plate, gold mid-body stripe, muzzle brake — visually distinct from green/red enemies
